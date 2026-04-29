@@ -1,8 +1,9 @@
+import os
 from flask import Flask, request, jsonify, send_file
 from openai import OpenAI
 
 app = Flask(__name__)
-client = OpenAI(api_key="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")
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 with open("dokument.txt", "r", encoding="utf-8") as f:
     tekst = f.read()
@@ -40,4 +41,8 @@ def ask():
         "answer": response.choices[0].message.content
     })
 
-app.run()
+import os
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
