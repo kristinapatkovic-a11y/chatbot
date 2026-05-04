@@ -1,26 +1,98 @@
 <!DOCTYPE html>
 <html>
+<head>
+    <title>Školski chatbot 😊</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial;
+            background: linear-gradient(135deg, #a8e6cf, #dcedc1);
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            padding: 15px;
+        }
+
+        #chat {
+            max-width: 600px;
+            margin: auto;
+            padding: 10px;
+        }
+
+        .message {
+            padding: 10px;
+            margin: 8px;
+            border-radius: 15px;
+            max-width: 75%;
+        }
+
+        .user {
+            background-color: #ffd3b6;
+            margin-left: auto;
+        }
+
+        .bot {
+            background-color: #ffffff;
+            margin-right: auto;
+        }
+
+        #inputArea {
+            display: flex;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: white;
+        }
+
+        input {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 15px;
+            border: none;
+            background-color: #ff8b94;
+            color: white;
+            font-size: 16px;
+        }
+    </style>
+</head>
 <body>
 
-<h2>Pitaj dokument 🤖</h2>
+<h1>📚 Moj pametni pomoćnik</h1>
 
-<input id="q" placeholder="Upiši pitanje">
-<button onclick="ask()">Pošalji</button>
+<div id="chat"></div>
 
-<p id="a"></p>
+<div id="inputArea">
+    <input id="question" placeholder="Postavi pitanje..." />
+    <button onclick="send()">Pošalji</button>
+</div>
 
 <script>
-async function ask() {
-  let q = document.getElementById("q").value;
+async function send() {
+    let q = document.getElementById("question").value;
 
-  let res = await fetch("/ask", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({question: q})
-  });
+    let chat = document.getElementById("chat");
 
-  let data = await res.json();
-  document.getElementById("a").innerText = data.answer;
+    chat.innerHTML += `<div class="message user">${q}</div>`;
+
+    let res = await fetch("/ask", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({question: q})
+    });
+
+    let data = await res.json();
+
+    chat.innerHTML += `<div class="message bot">${data.answer}</div>`;
+
+    document.getElementById("question").value = "";
 }
 </script>
 
