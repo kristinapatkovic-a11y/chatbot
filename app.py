@@ -13,12 +13,15 @@ def home():
     return send_file("index.html")
 
 @app.route("/ask", methods=["POST"])
-def ask():
-    user_text = prompt.lower().strip()
 
-if "hvala" in user_text or "hvala ti" in user_text or "thanks" in user_text:
-    return {"answer": "Nema na čemu 😊"}
+def ask():
     pitanje = request.json["question"]
+
+    # mali tekst za provjeru "hvala"
+    user_text = pitanje.lower().strip()
+
+    if "hvala" in user_text or "hvala ti" in user_text or "thanks" in user_text:
+        return {"answer": "Nema na čemu 😊"}
 
     prompt = f"""
     Ti si edukativni asistent za djecu.
@@ -41,6 +44,9 @@ if "hvala" in user_text or "hvala ti" in user_text or "thanks" in user_text:
         messages=[{"role": "user", "content": prompt}]
     )
 
+    return {"answer": response.choices[0].message.content}
+
+   
     return jsonify({
         "answer": response.choices[0].message.content
     })
