@@ -1,90 +1,126 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Školski chatbot 😊</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body {
-    font-family: Arial;
-    margin: 0;
-    padding: 0;
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI pomoćnik ✨</title>
 
-    background-image: url("/static/skola.png");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+    background: url("/static/skola.png") center/cover no-repeat;
 }
 
-        h1 {
-            text-align: center;
-            padding: 15px;
-        }
+/* TAMNI OVERLAY */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+}
 
-        #chat {
-            max-width: 600px;
-            margin: auto;
-            padding: 10px;
-        }
+/* CHAT KONTEJNER */
+#chat {
+    max-width: 600px;
+    margin: auto;
+    padding: 10px;
+    padding-bottom: 80px;
+}
 
-        .message {
-            padding: 10px;
-            margin: 8px;
-            border-radius: 15px;
-            max-width: 75%;
-        }
+/* PORUKE */
+.message {
+    padding: 10px 15px;
+    margin: 8px;
+    border-radius: 20px;
+    max-width: 75%;
+    animation: fadeIn 0.4s ease;
+}
 
-        .user {
-            background-color: #ffd3b6;
-            margin-left: auto;
-        }
+.user {
+    background: #ffd3b6;
+    margin-left: auto;
+}
 
-        .bot {
-            background-color: #ffffff;
-            margin-right: auto;
-        }
+.bot {
+    background: rgba(255,255,255,0.8);
+    backdrop-filter: blur(6px);
+}
 
-        #inputArea {
-            display: flex;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background: white;
-        }
+/* ANIMACIJA ULASKA */
+@keyframes fadeIn {
+    from {opacity:0; transform: translateY(10px);}
+    to {opacity:1; transform: translateY(0);}
+}
 
-        input {
-            flex: 1;
-            padding: 15px;
-            border: none;
-            font-size: 16px;
-        }
+/* INPUT */
+#inputArea {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    background: rgba(255,255,255,0.9);
+}
 
-        button {
-            padding: 15px;
-            border: none;
-            background-color: #ff8b94;
-            color: white;
-            font-size: 16px;
-        }
-    </style>
+input {
+    flex: 1;
+    padding: 15px;
+    border: none;
+    font-size: 16px;
+}
+
+button {
+    padding: 15px;
+    border: none;
+    background: #ff8b94;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* TYPING DOTS */
+.typing {
+    display: inline-block;
+}
+
+.typing span {
+    animation: blink 1.4s infinite;
+}
+
+.typing span:nth-child(2) { animation-delay: 0.2s; }
+.typing span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes blink {
+    0%, 80%, 100% { opacity: 0; }
+    40% { opacity: 1; }
+}
+</style>
 </head>
+
 <body>
 
-<h1>📚 Moj pametni pomoćnik</h1>
+<h2 style="text-align:center;color:white;">✨ Pametni školski pomoćnik</h2>
 
 <div id="chat"></div>
 
 <div id="inputArea">
-    <input id="question" placeholder="Postavi pitanje..." />
-    <button onclick="send()">Pošalji</button>
+    <input id="question" placeholder="Pitaj nešto..." />
+    <button onclick="send()">➤</button>
 </div>
 
 <script>
 async function send() {
     let q = document.getElementById("question").value;
-
     let chat = document.getElementById("chat");
 
     chat.innerHTML += `<div class="message user">${q}</div>`;
+
+    // typing animacija
+    let typing = document.createElement("div");
+    typing.className = "message bot";
+    typing.innerHTML = `<div class="typing">Bot piše <span>.</span><span>.</span><span>.</span></div>`;
+    chat.appendChild(typing);
+
+    chat.scrollTop = chat.scrollHeight;
 
     let res = await fetch("/ask", {
         method: "POST",
@@ -94,11 +130,17 @@ async function send() {
 
     let data = await res.json();
 
+    typing.remove();
+
     chat.innerHTML += `<div class="message bot">${data.answer}</div>`;
 
     document.getElementById("question").value = "";
+    chat.scrollTop = chat.scrollHeight;
 }
 </script>
 
 </body>
 </html>
+  
+
+  
