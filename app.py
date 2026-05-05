@@ -14,6 +14,10 @@ def home():
 
 @app.route("/ask", methods=["POST"])
 def ask():
+    user_text = prompt.lower().strip()
+
+if "hvala" in user_text or "hvala ti" in user_text or "thanks" in user_text:
+    return {"answer": "Nema na čemu 😊"}
     pitanje = request.json["question"]
 
     prompt = f"""
