@@ -25,7 +25,7 @@ def ask():
     ----------------
 
     Pravila:
-    - Ako odgovor ne postoji u tekstu → reci: "Ne znam na osnovu ovog dokumenta."
+    - Ako odgovor ne postoji u tekstu → reci: "Ne znam odgovor na tvoje pitanje."
     - Objasni jednostavno (kao za dijete)
     - Kratki odgovori
 
