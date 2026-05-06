@@ -2,16 +2,16 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Školski pomoćnik</title>
+<title>Školski AI</title>
 
 <style>
 body {
     margin: 0;
     font-family: Arial;
-    background: #f5f5f5;
+    background: #e9eef5;
 }
 
-/* GORNJI HERO (SLIKA) */
+/* HERO */
 .hero {
     height: 180px;
     background: url("/static/skola.png") center/cover no-repeat;
@@ -21,37 +21,35 @@ body {
     position: relative;
 }
 
-/* tamni sloj preko slike */
 .hero::before {
     content: "";
     position: absolute;
     inset: 0;
-    background: rgba(0,0,0,0.4);
+    background: rgba(0,0,0,0.35);
 }
 
-/* NASLOV */
 .hero h1 {
     position: relative;
     color: white;
     font-size: 24px;
-    z-index: 1;
 }
 
-/* CHAT */
+/* CHAT AREA */
 #chat {
     max-width: 600px;
     margin: auto;
     padding: 10px;
-    padding-bottom: 80px;
+    padding-bottom: 90px;
 }
 
-/* PORUKE */
+/* GLASS PORUKE */
 .message {
-    padding: 10px 15px;
+    padding: 12px 16px;
     margin: 8px;
-    border-radius: 15px;
+    border-radius: 18px;
     max-width: 75%;
     animation: fadeIn 0.3s ease;
+    backdrop-filter: blur(6px);
 }
 
 .user {
@@ -60,7 +58,7 @@ body {
 }
 
 .bot {
-    background: white;
+    background: rgba(255,255,255,0.7);
 }
 
 /* ANIMACIJA */
@@ -89,24 +87,38 @@ input {
 button {
     padding: 15px;
     border: none;
-    background: #ff8b94;
+    background: #4a90e2;
     color: white;
     font-size: 16px;
+}
+
+/* TYPING */
+.typing {
+    display: inline-block;
+}
+
+.typing span {
+    animation: blink 1.2s infinite;
+}
+
+.typing span:nth-child(2) { animation-delay: 0.2s; }
+.typing span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes blink {
+    0%, 80%, 100% { opacity: 0; }
+    40% { opacity: 1; }
 }
 </style>
 </head>
 
 <body>
 
-<!-- HERO -->
 <div class="hero">
-    <h1>📚 Školski pametni pomoćnik</h1>
+    <h1>📚 Školski AI pomoćnik</h1>
 </div>
 
-<!-- CHAT -->
 <div id="chat"></div>
 
-<!-- INPUT -->
 <div id="inputArea">
     <input id="question" placeholder="Postavi pitanje..." />
     <button onclick="send()">➤</button>
@@ -119,6 +131,12 @@ async function send() {
 
     chat.innerHTML += `<div class="message user">${q}</div>`;
 
+    // typing animacija
+    let typing = document.createElement("div");
+    typing.className = "message bot";
+    typing.innerHTML = `Piše <span class="typing"><span>.</span><span>.</span><span>.</span></span>`;
+    chat.appendChild(typing);
+
     let res = await fetch("/ask", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
@@ -127,13 +145,13 @@ async function send() {
 
     let data = await res.json();
 
+    typing.remove();
+
     chat.innerHTML += `<div class="message bot">${data.answer}</div>`;
 
     document.getElementById("question").value = "";
 }
 </script>
 
-</body>
-</html>
 </body>
 </html>
