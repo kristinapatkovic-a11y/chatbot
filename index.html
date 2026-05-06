@@ -2,24 +2,42 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI pomoćnik ✨</title>
+<title>Školski pomoćnik</title>
 
 <style>
 body {
     margin: 0;
     font-family: Arial;
-    background: url("/static/skola.png") center/cover no-repeat;
+    background: #f5f5f5;
 }
 
-/* TAMNI OVERLAY */
-body::before {
+/* GORNJI HERO (SLIKA) */
+.hero {
+    height: 180px;
+    background: url("/static/skola.png") center/cover no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+/* tamni sloj preko slike */
+.hero::before {
     content: "";
-    position: fixed;
+    position: absolute;
     inset: 0;
     background: rgba(0,0,0,0.4);
 }
 
-/* CHAT KONTEJNER */
+/* NASLOV */
+.hero h1 {
+    position: relative;
+    color: white;
+    font-size: 24px;
+    z-index: 1;
+}
+
+/* CHAT */
 #chat {
     max-width: 600px;
     margin: auto;
@@ -31,9 +49,9 @@ body::before {
 .message {
     padding: 10px 15px;
     margin: 8px;
-    border-radius: 20px;
+    border-radius: 15px;
     max-width: 75%;
-    animation: fadeIn 0.4s ease;
+    animation: fadeIn 0.3s ease;
 }
 
 .user {
@@ -42,11 +60,10 @@ body::before {
 }
 
 .bot {
-    background: rgba(255,255,255,0.8);
-    backdrop-filter: blur(6px);
+    background: white;
 }
 
-/* ANIMACIJA ULASKA */
+/* ANIMACIJA */
 @keyframes fadeIn {
     from {opacity:0; transform: translateY(10px);}
     to {opacity:1; transform: translateY(0);}
@@ -58,7 +75,8 @@ body::before {
     bottom: 0;
     width: 100%;
     display: flex;
-    background: rgba(255,255,255,0.9);
+    background: white;
+    border-top: 1px solid #ddd;
 }
 
 input {
@@ -74,36 +92,23 @@ button {
     background: #ff8b94;
     color: white;
     font-size: 16px;
-    cursor: pointer;
-}
-
-/* TYPING DOTS */
-.typing {
-    display: inline-block;
-}
-
-.typing span {
-    animation: blink 1.4s infinite;
-}
-
-.typing span:nth-child(2) { animation-delay: 0.2s; }
-.typing span:nth-child(3) { animation-delay: 0.4s; }
-
-@keyframes blink {
-    0%, 80%, 100% { opacity: 0; }
-    40% { opacity: 1; }
 }
 </style>
 </head>
 
 <body>
 
-<h2 style="text-align:center;color:white;">✨ Pametni školski pomoćnik</h2>
+<!-- HERO -->
+<div class="hero">
+    <h1>📚 Školski pametni pomoćnik</h1>
+</div>
 
+<!-- CHAT -->
 <div id="chat"></div>
 
+<!-- INPUT -->
 <div id="inputArea">
-    <input id="question" placeholder="Pitaj nešto..." />
+    <input id="question" placeholder="Postavi pitanje..." />
     <button onclick="send()">➤</button>
 </div>
 
@@ -114,14 +119,6 @@ async function send() {
 
     chat.innerHTML += `<div class="message user">${q}</div>`;
 
-    // typing animacija
-    let typing = document.createElement("div");
-    typing.className = "message bot";
-    typing.innerHTML = `<div class="typing">Bot piše <span>.</span><span>.</span><span>.</span></div>`;
-    chat.appendChild(typing);
-
-    chat.scrollTop = chat.scrollHeight;
-
     let res = await fetch("/ask", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
@@ -130,17 +127,13 @@ async function send() {
 
     let data = await res.json();
 
-    typing.remove();
-
     chat.innerHTML += `<div class="message bot">${data.answer}</div>`;
 
     document.getElementById("question").value = "";
-    chat.scrollTop = chat.scrollHeight;
 }
 </script>
 
 </body>
 </html>
-  
-
-  
+</body>
+</html>
